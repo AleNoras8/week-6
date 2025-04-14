@@ -1,26 +1,28 @@
-#include <iostream>
-#include <string>
-#include <stdexcept>
-#include <cctype>
-#include <cmath>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 // Function to convert a hex string to a decimal number
-int hex2Dec(const std::string& hexString) {
-    // Check if the string is a valid hex number
-    for (char c : hexString) {
-        if (!std::isxdigit(c)) {  // Check if each character is a valid hex digit
-            throw std::invalid_argument("Input is not a valid hex string.");
-        }
-    }
-
+int hex2Dec(const char* hexString) {
     int decimalValue = 0;
-    int length = hexString.length();
-    
+    int length = strlen(hexString);
+
     // Convert the hex string to a decimal number
     for (int i = 0; i < length; ++i) {
         char c = hexString[length - 1 - i];
-        int hexDigit = (std::isdigit(c)) ? c - '0' : std::toupper(c) - 'A' + 10;
-        decimalValue += hexDigit * static_cast<int>(std::pow(16, i));
+        int hexDigit;
+
+        if (isdigit(c)) {
+            hexDigit = c - '0';
+        } else if (isxdigit(c)) {
+            hexDigit = toupper(c) - 'A' + 10;
+        } else {
+            printf("Error: Input is not a valid hex string.\n");
+            return -1; // Return -1 in case of invalid input
+        }
+
+        decimalValue += hexDigit * (int)pow(16, i);
     }
 
     return decimalValue;
@@ -28,16 +30,14 @@ int hex2Dec(const std::string& hexString) {
 
 // Main function to test the hex2Dec function
 int main() {
-    std::string hexInput;
+    char hexInput[100];
 
-    std::cout << "Enter a hex number: ";
-    std::cin >> hexInput;
+    printf("Enter a hex number: ");
+    scanf("%99s", hexInput);
 
-    try {
-        int decimal = hex2Dec(hexInput);
-        std::cout << "The decimal value of hex \"" << hexInput << "\" is: " << decimal << std::endl;
-    } catch (const std::invalid_argument& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    int decimal = hex2Dec(hexInput);
+    if (decimal != -1) {
+        printf("The decimal value of hex \"%s\" is: %d\n", hexInput, decimal);
     }
 
     return 0;
